@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2 class="mb-4">Dashboard</h2>
+
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card bg-success">
+            <h5>Total Crops</h5>
+            <h2>{{ crops|length }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card bg-primary">
+            <h5>Total Income</h5>
+            <h2>₹ {{ total_income or 0 }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card bg-danger">
+            <h5>Total Expense</h5>
+            <h2>₹ {{ total_expense or 0 }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="stat-card bg-dark">
+            <h5>Profit</h5>
+            <h2>₹ {{ profit or 0 }}</h2>
+        </div>
+    </div>
+</div>
+
+<!-- Crop Table -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Crop Details</h5>
+    </div>
+
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Crop Name</th>
+                    <th>Season</th>
+                    <th>Area (Acre)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in crops %}
+                <tr>
+                    <td>{{ c.crop_name }}</td>
+                    <td>{{ c.season }}</td>
+                    <td>{{ c.area }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<!--
+<div class="row">
+    <div class="col-md-3">
+      <div class="card p-3">
+        <h6>Total Income</h6>
+        <h4 class="text-success">₹{{ total_income }}</h4>
+      </div>
+    </div>
+  
+    <div class="col-md-3">
+      <div class="card p-3">
+        <h6>Total Expense</h6>
+        <h4 class="text-danger">₹{{ total_expense }}</h4>
+      </div>
+    </div>
+  
+    <div class="col-md-3">
+      <div class="card p-3">
+        <h6>Net Profit</h6>
+        <h4 class="text-primary">₹{{ profit }}</h4>
+      </div>
+    </div>
+  </div>
+-->
+  
+{% endblock %}
