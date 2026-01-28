@@ -8,7 +8,7 @@ app.secret_key = "secret-key"
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(BASE_DIR, "farm_db.db")
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False # check
 
 db = SQLAlchemy(app)
 
@@ -53,7 +53,7 @@ class Income(db.Model):
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        user = User.query.filter_by(email=request.form["email"]).first()
+        user = User.query.filter_by(email=request.form["email"]).first() # check .first()
         if user and check_password_hash(user.password, request.form["password"]):
             session["user"] = user.id
             return redirect(url_for("home"))
@@ -187,3 +187,5 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+
+# This format convert to jsonify
