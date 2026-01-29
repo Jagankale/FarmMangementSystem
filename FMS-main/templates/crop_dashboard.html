@@ -3,7 +3,7 @@
 
 <h2 class="mb-4">Dashboard</h2>
 
-<!-- Stats Cards -->
+<!-- ===================== Stats Cards ===================== -->
 <div class="row mb-4">
     <div class="col-md-3">
         <div class="stat-card bg-success">
@@ -34,70 +34,57 @@
     </div>
 </div>
 
-<!-- Crop Table -->
-<div class="card shadow-sm">
-    <div class="card-header bg-white">
-        <h5 class="mb-0">Crop Details</h5>
-    </div>
-
-    <div class="card-body">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Crop Name</th>
-                    <th>Season</th>
-                    <th>Area (Acre)</th>
-                    <th>Created_At</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for c in crops %}
-                <tr>
-                    <td>{{ c.crop_name }}</td>
-                    <td>{{ c.season }}</td>
-                    <td>{{ c.area }}</td>
-                    <td>{{c.created_at}}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <div class="card mt-4 shadow-sm">
+<!-- ===================== Crop Details Table ===================== -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
             <div class="card-header bg-white">
-                <h5 class="mb-0">Crop Financial Performance</h5>
+                <h5 class="mb-0">Crop Details</h5>
             </div>
-            <div class="card-body">
-            <canvas id="cropChart" height="250"></canvas>
 
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Crop Name</th>
+                            <th>Season</th>
+                            <th>Area (Acre)</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for c in crops %}
+                        <tr>
+                            <td>{{ c.crop_name }}</td>
+                            <td>{{ c.season }}</td>
+                            <td>{{ c.area }}</td>
+                            <td>{{ c.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-
     </div>
 </div>
-<!--
-<div class="row">
-    <div class="col-md-3">
-      <div class="card p-3">
-        <h6>Total Income</h6>
-        <h4 class="text-success">₹{{ total_income }}</h4>
-      </div>
+
+<!-- ===================== Crop Financial Performance ===================== -->
+<div class="row mt-5">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white text-center">
+                <h5 class="mb-0">Crop Financial Performance</h5>
+                <small class="text-muted">Income vs Expense Overview</small>
+            </div>
+
+            <div class="card-body">
+                <canvas id="cropChart" height="320"></canvas>
+            </div>
+        </div>
     </div>
-  
-    <div class="col-md-3">
-      <div class="card p-3">
-        <h6>Total Expense</h6>
-        <h4 class="text-danger">₹{{ total_expense }}</h4>
-      </div>
-    </div>
-  
-    <div class="col-md-3">
-      <div class="card p-3">
-        <h6>Net Profit</h6>
-        <h4 class="text-primary">₹{{ profit }}</h4>
-      </div>
-    </div>
-  </div>
--->
+</div>
+
+<!-- ===================== Chart JS ===================== -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
@@ -129,16 +116,15 @@
                     }
                 ]
             },
-           options: {
+            options: {
                 responsive: true,
-                maintainAspectRatio: false,
                 plugins: {
                     legend: {
                         position: 'top'
                     }
                 },
                 scales: {
-                     y: {
+                    y: {
                         type: 'logarithmic',
                         beginAtZero: true
                     },
@@ -148,11 +134,8 @@
                     }
                 }
             }
-
         });
     }
 </script>
 
-
-  
 {% endblock %}

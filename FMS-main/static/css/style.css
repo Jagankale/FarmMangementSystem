@@ -92,3 +92,25 @@ body {
 .badge {
     font-size: 0.85rem;
 }
+
+/* Fix sidebar */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    /* adjust if your sidebar is wider */
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* Push page content to the right */
+.content {
+    margin-left: 240px;
+    /* same as sidebar width */
+}
+
+/* Prevent horizontal scroll */
+body {
+    overflow-x: hidden;
+}
