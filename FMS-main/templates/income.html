@@ -25,6 +25,7 @@
             <th>Quantity</th>
             <th>Price</th>
             <th>Total</th>
+            <th>Created_At</th>
         </tr>
     </thead>
     <tbody>
@@ -35,6 +36,7 @@
             <td>{{ i.quantity }}</td>
             <td>₹{{ i.price_per_unit }}</td>
             <td class="text-success">₹{{ i.total_amount }}</td>
+            <td>{{i.created_at}}</td>
         </tr>
         {% endfor %}
     </tbody>

@@ -47,6 +47,7 @@
                     <th>Crop Name</th>
                     <th>Season</th>
                     <th>Area (Acre)</th>
+                    <th>Created_At</th>
                 </tr>
             </thead>
             <tbody>
@@ -55,6 +56,7 @@
                     <td>{{ c.crop_name }}</td>
                     <td>{{ c.season }}</td>
                     <td>{{ c.area }}</td>
+                    <td>{{c.created_at}}</td>
                 </tr>
                 {% endfor %}
             </tbody>

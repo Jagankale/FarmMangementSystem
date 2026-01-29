@@ -18,6 +18,7 @@
             <th>Crop</th>
             <th>Description</th>
             <th>Amount (₹)</th>
+            <th>Created_At</th>
         </tr>
     </thead>
     <tbody>
@@ -29,6 +30,7 @@
             <td>{{ e.crop.crop_name if e.crop else "General" }}</td>
             <td>{{ e.description }}</td>
             <td class="text-danger fw-bold">₹{{ e.amount }}</td>
+            <td>{{e.created_at}}</td>
         </tr>
         {% endfor %}
     </tbody>

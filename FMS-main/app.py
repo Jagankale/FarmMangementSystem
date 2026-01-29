@@ -2,6 +2,8 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
+
 
 app = Flask(__name__)
 app.secret_key = "secret-key"
@@ -27,6 +29,12 @@ class Crop(db.Model):
     season = db.Column(db.String(50))
     planted_date = db.Column(db.String(20))
 
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+
+
 
 class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -39,6 +47,12 @@ class Expense(db.Model):
 
     crop = db.relationship("Crop", backref="expenses")
 
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+
+
 class Income(db.Model):   
     id = db.Column(db.Integer, primary_key=True)
     crop_id = db.Column(db.Integer, db.ForeignKey("crop.id"), nullable=True)
@@ -48,10 +62,19 @@ class Income(db.Model):
     details = db.Column(db.String(200))
     date = db.Column(db.String(20))
 
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+
+
+
 # -------------------- AUTH --------------------
 
 @app.route("/", methods=["GET", "POST"])
 def login():
+    # if "user" not in session:
+    #  return redirect(url_for("login"))
+
     if request.method == "POST":
         user = User.query.filter_by(email=request.form["email"]).first() # check .first()
         if user and check_password_hash(user.password, request.form["password"]):
@@ -62,6 +85,9 @@ def login():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    # if "user" not in session:
+    #  return redirect(url_for("login"))
+
     if request.method == "POST":
         user = User(
             name=request.form["name"],
@@ -87,9 +113,20 @@ def home():
 
 @app.route("/crop_dashboard")
 def crop_dashboard():
-    crops = Crop.query.all()
-    total_income = db.session.query(db.func.sum(Income.total_amount)).scalar() or 0
-    total_expense = db.session.query(db.func.sum(Expense.amount)).scalar() or 0
+    crops = Crop.query.filter_by(user_id=session["user"]).all()
+
+    total_income = db.session.query(
+    db.func.sum(Income.total_amount)
+).filter(
+    Income.user_id == session["user"]   
+).scalar() or 0
+
+    total_expense = db.session.query(
+    db.func.sum(Expense.amount)
+).filter(
+    Expense.user_id == session["user"]
+).scalar() or 0
+
     profit = total_income - total_expense
 
     return render_template(
@@ -107,19 +144,25 @@ def crops():
             crop_name=request.form["crop_name"],
             area=request.form["area"],
             season=request.form["season"],
-            planted_date=request.form["planted_date"]
+            planted_date=request.form["planted_date"],
+            user_id=session["user"]  
         )
         db.session.add(crop)
         db.session.commit()
         flash("Crop added successfully", "success")
         return redirect(url_for("crops"))
 
-    all_crops = Crop.query.order_by(Crop.id.desc()).all()
+    all_crops = Crop.query \
+    .filter_by(user_id=session["user"]) \
+    .order_by(Crop.id.desc()) \
+    .all()
+
     return render_template("crops.html",crops=all_crops)
 
 @app.route("/expenses", methods=["GET", "POST"])
 def expenses():
-    crops = Crop.query.all()
+    crops = Crop.query.filter_by(user_id=session["user"]).all()
+
 
     if request.method == "POST":
         expense_type = request.form["expense_type"]
@@ -134,7 +177,8 @@ def expenses():
             description=request.form["description"],
             amount=request.form["amount"],
             date=request.form["date"],
-            crop_id=crop_id
+            crop_id=crop_id,
+            user_id=session["user"]  
         )
 
         db.session.add(expense)
@@ -142,12 +186,17 @@ def expenses():
         flash("Expense added successfully", "success")
         return redirect(url_for("expenses"))
 
-    all_expenses = Expense.query.order_by(Expense.id.desc()).all()
+    all_expenses = Expense.query \
+    .filter_by(user_id=session["user"]) \
+    .order_by(Expense.id.desc()) \
+    .all()
+
     return render_template("expenses.html", crops=crops, expenses=all_expenses)
 
 @app.route("/income", methods=["GET", "POST"])
 def income():
-    crops = Crop.query.all()
+    crops = Crop.query.filter_by(user_id=session["user"]).all()
+
 
     if request.method == "POST":
         quantity = float(request.form["quantity"])
@@ -160,14 +209,19 @@ def income():
             price_per_unit=price,
             total_amount=total,
             details=request.form["details"],
-            date=request.form["date"]
+            date=request.form["date"],
+            user_id=session["user"]  
         )
         db.session.add(income)
         db.session.commit()
         flash("Income recorded successfully", "success")
         return redirect(url_for("income"))
 
-    incomes = Income.query.order_by(Income.id.desc()).all()
+    incomes = Income.query \
+    .filter_by(user_id=session["user"]) \
+    .order_by(Income.id.desc()) \
+    .all()
+
     total_income = sum(i.total_amount for i in incomes)
 
     return render_template(
