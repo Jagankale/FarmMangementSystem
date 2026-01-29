@@ -129,12 +129,39 @@ def crop_dashboard():
 
     profit = total_income - total_expense
 
+    crop_chart_data = []
+
+    for crop in crops:
+        crop_income = db.session.query(
+            db.func.sum(Income.total_amount)
+        ).filter(
+            Income.crop_id == crop.id,
+            Income.user_id == session["user"]
+        ).scalar() or 0
+
+        crop_expense = db.session.query(
+            db.func.sum(Expense.amount)
+        ).filter(
+            Expense.crop_id == crop.id,
+            Expense.user_id == session["user"]
+        ).scalar() or 0
+
+        crop_chart_data.append({
+            "name": crop.crop_name,
+            "income": crop_income,
+            "expense": crop_expense
+        })
+
+        print(crop_chart_data)
+
+
     return render_template(
         "crop_dashboard.html",
         crops = crops,
         total_income=total_income,
         total_expense=total_expense,
-        profit=profit
+        profit=profit,
+        crop_chart_data=crop_chart_data
     )
 
 @app.route("/crops", methods=["GET", "POST"])

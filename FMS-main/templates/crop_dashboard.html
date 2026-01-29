@@ -61,6 +61,17 @@
                 {% endfor %}
             </tbody>
         </table>
+
+        <div class="card mt-4 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Crop Financial Performance</h5>
+            </div>
+            <div class="card-body">
+            <canvas id="cropChart" height="250"></canvas>
+
+            </div>
+        </div>
+
     </div>
 </div>
 <!--
@@ -87,5 +98,61 @@
     </div>
   </div>
 -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    const cropData = {{ crop_chart_data | default ([]) | tojson }};
+
+    const labels = cropData.map(c => c.name);
+    const incomeData = cropData.map(c => c.income);
+    const expenseData = cropData.map(c => c.expense);
+
+    const canvas = document.getElementById('cropChart');
+
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Income',
+                        data: incomeData,
+                        backgroundColor: '#28a745'
+                    },
+                    {
+                        label: 'Expense',
+                        data: expenseData,
+                        backgroundColor: '#dc3545'
+                    }
+                ]
+            },
+           options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                },
+                scales: {
+                     y: {
+                        type: 'logarithmic',
+                        beginAtZero: true
+                    },
+                    x: {
+                        barPercentage: 0.6,
+                        categoryPercentage: 0.6
+                    }
+                }
+            }
+
+        });
+    }
+</script>
+
+
   
 {% endblock %}

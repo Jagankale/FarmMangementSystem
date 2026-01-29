@@ -1,2 +1,1 @@
-if "user" not in session:
-    #  return redirect(url_for("login"))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
